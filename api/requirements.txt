@@ -1,0 +1,12 @@
+# 欺诈检测系统 REST API - Python依赖
+# 安装: pip install -r requirements.txt
+
+# Web框架
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+
+# 数据验证
+pydantic>=2.6.0
+
+# 限流
+slowapi>=0.1.9

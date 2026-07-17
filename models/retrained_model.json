@@ -1,0 +1,41 @@
+{
+  "version": "v2.1.0",
+  "trained_at": "2026-06-14T13:18:49.308558",
+  "training_samples": 1004,
+  "metrics": {
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "feature_names": [
+    "amount_norm",
+    "confidence",
+    "source_risk",
+    "city_risk",
+    "is_ml_source",
+    "is_cep_source",
+    "is_graph_source"
+  ],
+  "logistic_regression": {
+    "coef": [
+      [
+        -0.3166565646469581,
+        2.6001200945642893,
+        2.5062423705016985,
+        -0.5135783893338551,
+        0.17945834790255397,
+        0.7671062063420996,
+        0.970945199486234
+      ]
+    ],
+    "intercept": 0.09821738177151947,
+    "classes": [
+      0,
+      1
+    ]
+  },
+  "isolation_forest": {
+    "n_estimators": 100,
+    "contamination": 0.3
+  }
+}

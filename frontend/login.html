@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 金融反诈智能守护系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0f1117;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e6edf3;
+        }
+        .login-container {
+            width: 380px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 2px;
+            padding: 40px 36px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+        }
+        .login-header {
+            text-align: left;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #30363d;
+        }
+        .login-logo {
+            width: 32px;
+            height: 32px;
+            background: #58a6ff;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .login-header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 4px;
+        }
+        .login-header p {
+            font-size: 12px;
+            color: #6e7681;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8b949e;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #0f1117;
+            border: 1px solid #30363d;
+            border-radius: 2px;
+            color: #e6edf3;
+            font-size: 13px;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+        .form-input:focus {
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 2px rgba(88,166,255,0.15);
+        }
+        .form-input::placeholder { color: #484f58; }
+        .login-btn {
+            width: 100%;
+            padding: 8px;
+            background: #58a6ff;
+            border: none;
+            border-radius: 2px;
+            color: #0d1117;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            margin-top: 4px;
+            font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .login-btn:hover {
+            background: #79b8ff;
+        }
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .login-error {
+            text-align: center;
+            font-size: 12px;
+            color: #f85149;
+            min-height: 18px;
+            margin-top: 10px;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 11px;
+            color: #484f58;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+        .demo-hint {
+            margin-top: 16px;
+            padding: 10px;
+            background: rgba(88,166,255,0.08);
+            border: 1px solid rgba(88,166,255,0.15);
+            border-radius: 2px;
+            font-size: 11px;
+            color: #8b949e;
+            text-align: center;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+        .demo-hint strong { color: #58a6ff; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0d1117" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h1>RuiKang</h1>
+            <p>FRAUD DETECTION SYSTEM</p>
+        </div>
+
+        <form id="loginForm" onsubmit="return false;">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" class="form-input" id="username" placeholder="username" autocomplete="username" autofocus>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" class="form-input" id="password" placeholder="password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">登 录</button>
+            <div class="login-error" id="loginError"></div>
+        </form>
+
+        <div class="demo-hint">
+            DEMO: <strong>admin</strong> / <strong>admin123</strong>
+        </div>
+
+        <div class="login-footer">
+            Flink + CEP/SQL/Graph/ML/GNN &copy; 2026
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+
+        // 已登录则直接跳转
+        if (localStorage.getItem('auth_token')) {
+            window.location.href = 'index.html';
+        }
+
+        const form = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!username || !password) {
+                loginError.textContent = '请输入用户名和密码';
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+            loginError.textContent = '';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.detail || '登录失败');
+                }
+
+                const data = await res.json();
+                localStorage.setItem('auth_token', data.access_token);
+                localStorage.setItem('auth_user', JSON.stringify(data.user));
+                window.location.href = 'index.html';
+            } catch (err) {
+                loginError.textContent = err.message || '登录失败，请检查网络';
+            }
+
+            loginBtn.disabled = false;
+            loginBtn.textContent = '登 录';
+        });
+
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') form.dispatchEvent(new Event('submit'));
+        });
+    </script>
+</body>
+</html>
